@@ -1,3 +1,6 @@
+# TODO: Add more logic, king, choirboy, riot, legion, huntsman
+#       Change the discord bot intents
+#       Make existing logic look better
 import discord
 from discord.ext import commands
 import botc_helper
@@ -5,11 +8,11 @@ import ast
 import random
 import copy
 
-intents = discord.Intents().all()
-bot = commands.Bot(command_prefix="!", intents = intents)
+intents = discord.Intents().all() # Might make this better than all of the intents
+bot = commands.Bot(command_prefix="!", intents = intents) 
 
 @bot.event
-async def on_ready():
+async def on_ready(): # Mostly constants
     print(f"Logged in as {bot.user}")
     bot.script_og = []
     bot.script = []
@@ -28,7 +31,7 @@ async def on_ready():
 
 @bot.command()
 async def set_script(ctx, *, arg):
-    bot.script_og = ast.literal_eval(arg)
+    bot.script_og = ast.literal_eval(arg) # Just kinda loads the script, idk what to say
     await ctx.reply("Script loaded")
 
 @bot.command()
@@ -59,10 +62,11 @@ async def new_game(ctx, number, player_role_id):
         player_ids.append(demon_id)
     
     delta_outsiders = 0
-    for i in range(counts[2]):
+    for i in range(counts[2]): # Goes through the number of minions that should be in play
         curr_minion_id = random.choice(player_ids)
         minion_role = random.choice(bot.script[2]["roles"])
-        if demon_role == "fang_gu":
+
+        if demon_role == "fang_gu": # More edge-case logic, might want to make this neater later
             delta_outsiders += 1
         if minion_role == "baron":
             delta_outsiders += 2
@@ -71,13 +75,13 @@ async def new_game(ctx, number, player_role_id):
         elif minion_role == "vigormortis":
             delta_outsiders -= 1
         elif minion_role == "godfather":
-            delta_outsiders += random.choice([1, -1])
+            delta_outsiders += random.choice([1, -1]) # Fuck you storyteller; it's random
 
-        bot.game.append(botc_helper.Player(minion_role, False, curr_minion_id, ctx.guild.get_member(curr_minion_id).display_name))
+        bot.game.append(botc_helper.Player(minion_role, False, curr_minion_id, ctx.guild.get_member(curr_minion_id).display_name)) # Add the minion
         player_ids.remove(curr_minion_id)
         bot.script[2]["roles"].remove(minion_role)
 
-    counts[1] += delta_outsiders
+    counts[1] += delta_outsiders # Adding outsiders, copy-pasted logic
     for i in range(counts[1]):
         curr_outsider_id = random.choice(player_ids)
         curr_outsider_role = random.choice(bot.script[1]["roles"])
@@ -85,14 +89,14 @@ async def new_game(ctx, number, player_role_id):
         player_ids.remove(curr_outsider_id)
         bot.script[1]["roles"].remove(curr_outsider_role)
 
-    for i in range(len(player_ids)):
+    for i in range(len(player_ids)): # Looping through rest of the player ids to assign them townsfolk 
         curr_townsfolk_id = random.choice(player_ids)
         curr_townsfolk_role = random.choice(bot.script[0]["roles"])
         bot.game.append(botc_helper.Player(curr_townsfolk_role, True, curr_townsfolk_id, ctx.guild.get_member(curr_townsfolk_id).display_name))
         player_ids.remove(curr_townsfolk_id)
         bot.script[0]["roles"].remove(curr_townsfolk_role)
 
-    await ctx.reply(bot.game)
+    await ctx.reply(bot.game) # Sends a message in the channel to show the grimoir
 
-token = open("token.txt", "r")
+token = open("token.txt", "r") # You aint getting my token you sneaky boi
 bot.run(token.readline())
