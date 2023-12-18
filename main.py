@@ -81,8 +81,11 @@ async def new_game(ctx, number, player_role_id):
         player_ids.remove(curr_minion_id)
         bot.script[2]["roles"].remove(minion_role)
 
-    counts[1] += delta_outsiders # Adding outsiders, copy-pasted logic
-    for i in range(counts[1]):
+    counts[1] += delta_outsiders # Adding changes to the outsider count due to minions
+    if counts[1] < 0: # Making sure there aren't negative outsider totals
+        counts[1] = 0
+        
+    for i in range(counts[1]): # Adding outsiders, copy-pasted logic
         curr_outsider_id = random.choice(player_ids)
         curr_outsider_role = random.choice(bot.script[1]["roles"])
         bot.game.append(botc_helper.Player(curr_outsider_role, True, curr_outsider_id, ctx.guild.get_member(curr_outsider_id).display_name))
