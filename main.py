@@ -3,6 +3,8 @@
 #       Make existing logic look better
 #       Add demon bluffs
 #       Add json exporting
+#       Add automatic role distribution
+#       Add automatic private vc generation
 import discord
 from discord.ext import commands
 import botc_helper
