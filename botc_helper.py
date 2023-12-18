@@ -10,5 +10,5 @@ class Player:
         self.discord_nick = discord_nick
 
     def __repr__(self) -> str:
-        return f"name: {self.discord_nick} role : {self.role}\n"
+        return f"name: {self.discord_nick}; role : {self.role}\n"
     
