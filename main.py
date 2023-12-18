@@ -3,6 +3,7 @@ from discord.ext import commands
 import botc_helper
 import ast
 import random
+import copy
 
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix="!", intents = intents)
@@ -27,20 +28,21 @@ async def on_ready():
 
 @bot.command()
 async def set_script(ctx, *, arg):
-    bot.script = ast.literal_eval(arg)
-    # bot.script_og = bot.script.copy() # NOT WORKING FOR SOME REASON
-    print(bot.script)
+    bot.script_og = ast.literal_eval(arg)
+    await ctx.reply("Script loaded")
 
 @bot.command()
 async def new_game(ctx, number, player_role_id):
-    # bot.script = bot.script_og # NOT WORKING FOR SOME REASON
+    counts = []
+    delta_outsiders = 0
+    bot.script = copy.deepcopy(bot.script_og)
     bot.game = []
     player_ids = []
     for member in ctx.guild.members:
         for role in member.roles:
             if int(role.id) == int(player_role_id):
                 player_ids.append(member.id)
-    counts = bot.count_to_numbers[int(number)]
+    counts = copy.deepcopy(bot.count_to_numbers[int(number)])
     demon_id = random.choice(player_ids)
     demon_role = random.choice(bot.script[3]["roles"])
     bot.game.append(botc_helper.Player(demon_role, False, demon_id, ctx.guild.get_member(demon_id).display_name))
@@ -85,7 +87,7 @@ async def new_game(ctx, number, player_role_id):
         player_ids.remove(curr_townsfolk_id)
         bot.script[0]["roles"].remove(curr_townsfolk_role)
 
-    print(bot.game)
+    await ctx.reply(bot.game)
 
 token = open("token.txt", "r")
 bot.run(token.readline())
