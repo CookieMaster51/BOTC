@@ -5,6 +5,8 @@
 #       Add json exporting
 #       Add automatic role distribution
 #       Add automatic private vc generation
+#       Testing of weirder scripts
+
 import discord
 from discord.ext import commands
 import botc_helper
