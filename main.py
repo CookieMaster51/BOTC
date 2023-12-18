@@ -33,21 +33,26 @@ async def set_script(ctx, *, arg):
 
 @bot.command()
 async def new_game(ctx, number, player_role_id):
+    # Just doing some re-setting of variables
     counts = []
     delta_outsiders = 0
     bot.script = copy.deepcopy(bot.script_og)
     bot.game = []
-    player_ids = []
-    for member in ctx.guild.members:
-        for role in member.roles:
-            if int(role.id) == int(player_role_id):
-                player_ids.append(member.id)
-    counts = copy.deepcopy(bot.count_to_numbers[int(number)])
+    player_ids = [] 
+
+    for member in ctx.guild.members: # Goes through every member
+        for role in member.roles: # Goes through their roles
+            if int(role.id) == int(player_role_id): # Checks if that role is the one specified
+                player_ids.append(member.id) # Makes a list of players with that role
+
+    counts = copy.deepcopy(bot.count_to_numbers[int(number)]) # Gets the number of different types of players from the master copy
+
     demon_id = random.choice(player_ids)
     demon_role = random.choice(bot.script[3]["roles"])
-    bot.game.append(botc_helper.Player(demon_role, False, demon_id, ctx.guild.get_member(demon_id).display_name))
+    bot.game.append(botc_helper.Player(demon_role, False, demon_id, ctx.guild.get_member(demon_id).display_name)) # Adds a demon to the game
     player_ids.remove(bot.game[0].discord_id)
-    if bot.game[0].role == "lil_monsta":
+
+    if bot.game[0].role == "lil_monsta": # UNTESTED LOGIC, hopefully works
         bot.game = []
         counts[2] += 1
         counts[3] = 0
