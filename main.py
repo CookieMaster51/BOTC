@@ -1,6 +1,8 @@
 # TODO: Add more logic, king, choirboy, riot, legion, huntsman
 #       Change the discord bot intents
 #       Make existing logic look better
+#       Add demon bluffs
+#       Add json exporting
 import discord
 from discord.ext import commands
 import botc_helper
@@ -84,7 +86,7 @@ async def new_game(ctx, number, player_role_id):
     counts[1] += delta_outsiders # Adding changes to the outsider count due to minions
     if counts[1] < 0: # Making sure there aren't negative outsider totals
         counts[1] = 0
-        
+
     for i in range(counts[1]): # Adding outsiders, copy-pasted logic
         curr_outsider_id = random.choice(player_ids)
         curr_outsider_role = random.choice(bot.script[1]["roles"])
