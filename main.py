@@ -21,7 +21,7 @@ async def on_ready(): # Mostly constants
     bot.script_og = []
     bot.script =  []
     bot.game = botc_helper.Game()
-    bot.is_poppygrower = False
+    bot.evil_knows = False
     bot.count_to_numbers = {5:[3,0,1,1],
                             6:[3,1,1,1],
                             7:[5,0,1,1],
@@ -127,9 +127,9 @@ async def purge_vcs(ctx):
 @bot.command()
 async def send_roles(ctx):
     bot.game.combine()
-    for person in bot.game.full_game:
-        person_channel = discord.utils.get(ctx.guild.channels, name = f"{person.discord_nick.lower()}-home")
-        if not person.alignment_good and not bot.is_poppygrower:
+    for person in bot.game.full_game: # Loops through everyone
+        person_channel = discord.utils.get(ctx.guild.channels, name = f"{person.discord_nick.lower()}-home") # Gets their private channel
+        if not person.alignment_good and not bot.evil_knows: # Checks if the person is good and that evil should learn who eachother are
             if person in bot.game.demon:
                 await person_channel.send(content = f"You are the {person.role}\nYour minions are {str(''.join(list(bot.game.minions[x].discord_nick for x in range(len(bot.game.minions)))))}")
             else:
