@@ -22,7 +22,14 @@ async def on_ready(): # Mostly constants
     bot.script_og = []
     bot.script =  []
     bot.game = botc_helper.Game()
-    bot.evil_knows = False
+    bot.evil_knows = True
+    bot.choir_boy = False
+    bot.huntsman = False
+    bot.legion = False
+    bot.riot = False
+    bot.king = ""
+    bot.damsel = False
+
     bot.count_to_numbers = {5:[3,0,1,1],
                             6:[3,1,1,1],
                             7:[5,0,1,1],
@@ -50,6 +57,13 @@ async def new_game(ctx, number, player_role_id):
     bot.game = botc_helper.Game()
     player_ids = [] 
     is_demon = True
+    bot.evil_knows = True 
+    bot.choir_boy = False
+    bot.huntsman = False
+    bot.damsel = False
+    bot.legion = False
+    bot.riot = False
+    bot.king = ""
 
     for member in ctx.guild.members: # Goes through every member
         for role in member.roles: # Goes through their roles
@@ -63,9 +77,9 @@ async def new_game(ctx, number, player_role_id):
     bot.game.demon.append(botc_helper.Player(demon_role, False, demon_id, ctx.guild.get_member(demon_id).display_name)) # Adds a demon to the game
     player_ids.remove(demon_id)
 
-    if bot.game.demon[0].role == "lil_monsta": # UNTESTED LOGIC, hopefully works
+    if bot.game.demon[0].role == "lil_monsta": # Logic tested and works (i think)
         is_demon = False
-        bot.game = []
+        bot.game = botc_helper.Game()
         counts[2] += 1
         counts[3] = 0
         player_ids.append(demon_id)
@@ -104,8 +118,45 @@ async def new_game(ctx, number, player_role_id):
     for i in range(len(player_ids)): # Looping through rest of the player ids to assign them townsfolk 
         curr_townsfolk_id = random.choice(player_ids)
         curr_townsfolk_role = random.choice(bot.script[0]["roles"])
-        bot.game.townsfolk.append(botc_helper.Player(curr_townsfolk_role, True, curr_townsfolk_id, ctx.guild.get_member(curr_townsfolk_id).display_name))
         player_ids.remove(curr_townsfolk_id)
+
+        if curr_townsfolk_role == "choirboy": ## ~~~ I PRAY THIS WORKS, MORE TESTING NEEDED ~~~
+            bot.choir_boy = True
+            if bot.king == "":
+                if len(bot.game.townsfolk) > 0:
+                    pos = random.randint(0, len(bot.game.townsfolk)-1)
+                    bot.game.townsfolk[pos].role = "king"
+                    bot.king = bot.game.townsfolk[pos].discord_nick
+                    bot.script[0]["roles"].remove("king")
+                else:
+                    king_id = random.choice(player_ids)
+                    bot.game.townsfolk.append(botc_helper.Player("king", True, king_id, ctx.guild.get_member(king_id).display_name))
+                    bot.king = ctx.guild.get_member(king_id).display_name
+                    bot.script[0]["roles"].remove("king")
+
+        
+        if curr_townsfolk_role == "huntsman":
+            if not bot.damsel:
+                bot.huntsman = True
+                bot.damsel = True
+                if len(bot.game.townsfolk) > 0:
+                    bot.game.townsfolk[random.randint(0, len(bot.game.townsfolk))].role = "damsel"
+                    bot.script[0]["roles"].remove("damsel")
+                else:
+                    damsel_id = random.choice(player_ids)
+                    bot.game.townsfolk.append(botc_helper.Player("damsel", True, damsel_id, ctx.guild.get_member(damsel_id).display_name))
+                    bot.script[0]["roles"].remove("damsel")
+
+        if curr_townsfolk_role == "king":
+            bot.king = ctx.guild.get_member(curr_townsfolk_id).display_name
+
+        if curr_townsfolk_role == "damsel":
+            bot.damsel = True
+
+        if curr_townsfolk_role == "poppy_grower":
+            bot.evil_knows = False
+
+        bot.game.townsfolk.append(botc_helper.Player(curr_townsfolk_role, True, curr_townsfolk_id, ctx.guild.get_member(curr_townsfolk_id).display_name))
         bot.script[0]["roles"].remove(curr_townsfolk_role)
 
     if is_demon:
@@ -130,11 +181,15 @@ async def send_roles(ctx):
     bot.game.combine()
     for person in bot.game.full_game: # Loops through everyone
         person_channel = discord.utils.get(ctx.guild.channels, name = f"{person.discord_nick.lower()}-home") # Gets their private channel
-        if not person.alignment_good and not bot.evil_knows: # Checks if the person is good and that evil should learn who eachother are
+        if not person.alignment_good and bot.evil_knows: # Checks if the person is good and that evil should learn who eachother are
             if person in bot.game.demon:
                 await person_channel.send(content = f"You are the {person.role}\nYour minions are {str(''.join(list(bot.game.minions[x].discord_nick for x in range(len(bot.game.minions)))))}")
+                if bot.king != "":
+                    await person_channel.send(content = f"{bot.king} is your king")
             else:
                 await person_channel.send(content = f"You are the {person.role}\nYour demon is {bot.game.demon[0].discord_nick}")
+                if bot.damsel:
+                    await person_channel.send(content = f"There is a damsel")
         else:
             await person_channel.send(content = f"You are the {person.role}")
 
