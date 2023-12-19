@@ -1,4 +1,4 @@
-# TODO: Add more logic, king, choirboy, riot, legion, huntsman
+# TODO: Add more logic, riot, legion,
 #       Change the discord bot intents
 #       Make existing logic look better
 #       Add json exporting
