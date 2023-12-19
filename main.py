@@ -2,7 +2,6 @@
 #       Change the discord bot intents
 #       Make existing logic look better
 #       Add json exporting
-#       Add automatic role distribution
 #       Testing of weirder scripts
 
 import discord
@@ -20,8 +19,9 @@ bot = commands.Bot(command_prefix="!", intents = intents)
 async def on_ready(): # Mostly constants
     print(f"Logged in as {bot.user}")
     bot.script_og = []
-    bot.script = []
+    bot.script =  []
     bot.game = botc_helper.Game()
+    bot.is_poppygrower = False
     bot.count_to_numbers = {5:[3,0,1,1],
                             6:[3,1,1,1],
                             7:[5,0,1,1],
@@ -123,6 +123,19 @@ async def new_game(ctx, number, player_role_id):
 async def purge_vcs(ctx):
     for channel in discord.utils.get(ctx.guild.categories, id = bot.PRIVATE_VCS_CATEGORY_ID).channels: # Goes through every channel in the privatevcs category
         await channel.delete() # Gets rid of it
+
+@bot.command()
+async def send_roles(ctx):
+    bot.game.combine()
+    for person in bot.game.full_game:
+        person_channel = discord.utils.get(ctx.guild.channels, name = f"{person.discord_nick.lower()}-home")
+        if not person.alignment_good and not bot.is_poppygrower:
+            if person in bot.game.demon:
+                await person_channel.send(content = f"You are the {person.role}\nYour minions are {str(''.join(list(bot.game.minions[x].discord_nick for x in range(len(bot.game.minions)))))}")
+            else:
+                await person_channel.send(content = f"You are the {person.role}\nYour demon is {bot.game.demon[0].discord_nick}")
+        else:
+            await person_channel.send(content = f"You are the {person.role}")
 
 @bot.event
 async def on_voice_state_update(member, before, after):

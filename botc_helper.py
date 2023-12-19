@@ -14,10 +14,15 @@ class Player:
         return f"name: {self.discord_nick}; role : {self.role}" if self.bluffs == [] else f"name: {self.discord_nick}; role : {self.role}; bluffs : {self.bluffs}"
 
 class Game:
-    demon = []
-    minions = []
-    outsiders = []
-    townsfolk = []
+    def __init__(self) -> None:
+        self.demon = []
+        self.minions = []
+        self.outsiders = []
+        self.townsfolk = []
+        self.full_game = []
+
+    def combine(self):
+        self.full_game = self.demon + self.minions + self.outsiders + self.townsfolk
     
     def __repr__(self) -> str:
         return str(list(map(str, self.demon)) + list(map(str, self.minions)) + list(map(str, self.outsiders)) + list(map(str, self.townsfolk))) + "\n"
