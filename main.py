@@ -3,6 +3,7 @@
 #       Make existing logic look better
 #       Add json exporting
 #       Testing of weirder scripts
+#       Add storyteller customisation
 
 import discord
 from discord.ext import commands
