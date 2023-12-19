@@ -1,4 +1,4 @@
-# TODO: Add more logic, riot, legion,
+# TODO: Add more logic, riot, legion, atheist
 #       Change the discord bot intents
 #       Make existing logic look better
 #       Add json exporting
