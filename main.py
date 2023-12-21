@@ -41,7 +41,7 @@ async def on_ready(): # Mostly constants
                             13:[9,0,3,1],
                             14:[9,1,3,1],
                             15:[9,2,3,1]}
-    bot.PRIVATE_VCS_CATEGORY_ID = 1186598911096406046
+    
 
 @bot.command()
 async def set_script(ctx, *, arg):
@@ -173,8 +173,9 @@ async def new_game(ctx, number, player_role_id):
 
 @bot.command()
 async def purge_vcs(ctx):
-    for channel in discord.utils.get(ctx.guild.categories, id = bot.PRIVATE_VCS_CATEGORY_ID).channels: # Goes through every channel in the privatevcs category
-        await channel.delete() # Gets rid of it
+    for channel in discord.utils.get(ctx.guild.categories, name = "PRIVATEVCS").channels: # Goes through every channel in the privatevcs category
+        if "create" not in channel.name:
+            await channel.delete() # Gets rid of it
 
 @bot.command()
 async def send_roles(ctx):
@@ -195,23 +196,22 @@ async def send_roles(ctx):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    TWO_PLAYER_CREATE = 1186328181758763169
-    THREE_PLAYER_CREATE = 1186604174130024559
-    FOUR_PLAYER_CREATE = 1186604215343255573
-    
+    TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
+    THREE_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "3 person create").id
+    FOUR_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "4 person create").id
 
     if after.channel.id == TWO_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"2 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, id = bot.PRIVATE_VCS_CATEGORY_ID), user_limit = 2)
+        await after.channel.guild.create_voice_channel(f"2 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 2)
 
     if after.channel.id == THREE_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"3 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, id = bot.PRIVATE_VCS_CATEGORY_ID), user_limit = 3)
+        await after.channel.guild.create_voice_channel(f"3 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 3)
 
     if after.channel.id == FOUR_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"4 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, id = bot.PRIVATE_VCS_CATEGORY_ID), user_limit = 4)
+        await after.channel.guild.create_voice_channel(f"4 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 4)
 
 
-    if before.channel.category.id == bot.PRIVATE_VCS_CATEGORY_ID:
-        if len(before.channel.members) == 0: # Checks if there are 0 players in that vc
+    if before.channel.category.id == discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS").id:
+        if len(before.channel.members) == 0 and "create" not in before.channel.name: # Checks if there are 0 players in that vc
             await before.channel.delete()
     
 
