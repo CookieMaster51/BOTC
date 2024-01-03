@@ -194,6 +194,22 @@ async def send_roles(ctx):
         else:
             await person_channel.send(content = f"You are the {person.role}")
 
+@bot.command()
+async def collect(ctx, channel_id):
+    for member in ctx.guild.members:
+        if member.voice != None:
+            await member.move_to(discord.utils.get(ctx.guild.channels, id = int(channel_id)))
+
+@bot.command()
+async def distribute(ctx, category_id):
+    to_move = [member for member in ctx.guild.members if member.voice != None]
+    available = [priv_vc for priv_vc in discord.utils.get(ctx.guild.categories, id = int(category_id)).channels if type(priv_vc) == discord.VoiceChannel]
+    if len(to_move) <= len(available):
+        for index, member in enumerate(to_move):
+            await member.move_to(available[index])
+    else:
+        await ctx.reply("Too many people too move")
+
 @bot.event
 async def on_voice_state_update(member, before, after):
     TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
