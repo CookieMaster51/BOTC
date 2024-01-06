@@ -12,9 +12,11 @@ import ast
 import random
 import copy
 import discord.utils
+import logging
 
 intents = discord.Intents().all() # Might make this better than all of the intents
 bot = commands.Bot(command_prefix="!", intents = intents) 
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 @bot.event
 async def on_ready(): # Mostly constants
@@ -233,4 +235,4 @@ async def on_voice_state_update(member, before, after):
     
 
 token = open("token.txt", "r") # You aint getting my token you sneaky boi
-bot.run(token.readline())
+bot.run(token.readline(), log_handler=handler)
