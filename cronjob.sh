@@ -9,5 +9,3 @@ if [ "${output}" != "Already up to date." ]; then
     python3 botc-main.py &
   fi
 fi
-
-
