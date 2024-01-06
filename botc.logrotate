@@ -1,0 +1,5 @@
+/home/ubuntu/BOTC/discord.log {
+    rotate 5
+    hourly
+    size 1000k
+}
