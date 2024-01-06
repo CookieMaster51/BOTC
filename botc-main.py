@@ -7,7 +7,7 @@
 
 import discord
 from discord.ext import commands
-import botc-helper
+import botc_helper
 import ast
 import random
 import copy
