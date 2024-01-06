@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 output=$(git pull)
 if [ "${output}" != "Already up to date." ]; then
   pid=$(ps -ef | grep -v grep | grep botc-main.py | awk '{print $2}')
