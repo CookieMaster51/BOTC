@@ -6,6 +6,6 @@ if [ "${output}" != "Already up to date." ]; then
   if [ -n "${pid}" ]; then
     kill -9 ${pid}
     sleep 5
-    python3 botc-main.py &
   fi
+  python3 botc-main.py &
 fi
