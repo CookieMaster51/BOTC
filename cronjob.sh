@@ -13,3 +13,4 @@ else
  if [ -z "${pid}" ]; then
    python3 botc-main.py &
  fi
+fi
