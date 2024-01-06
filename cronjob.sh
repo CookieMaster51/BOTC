@@ -8,4 +8,8 @@ if [ "${output}" != "Already up to date." ]; then
     sleep 5
   fi
   python3 botc-main.py &
-fi
+else
+ pid=$(ps -ef | grep -v grep | grep botc-main.py | awk '{print $2}')
+ if [ -z "${pid}" ]; then
+   python3 botc-main.py &
+ fi
