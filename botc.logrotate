@@ -3,4 +3,6 @@
     rotate 5
     hourly
     size 1000k
+    copytruncate
+    compress
 }
