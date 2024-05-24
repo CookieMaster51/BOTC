@@ -1,0 +1,8 @@
+/home/ubuntu/BOTC/discord.log {
+    su ubuntu ubuntu
+    rotate 5
+    daily
+    size 1000k
+    copytruncate
+    compress
+}

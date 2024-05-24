@@ -12,9 +12,11 @@ import ast
 import random
 import copy
 import discord.utils
+import logging
 
 intents = discord.Intents().all() # Might make this better than all of the intents
 bot = commands.Bot(command_prefix="!", intents = intents) 
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
 @bot.event
 async def on_ready(): # Mostly constants
@@ -206,26 +208,43 @@ async def send_roles(ctx):
         else:
             await person_channel.send(content = f"You are the {person.role}")
 
+@bot.command()
+async def collect(ctx, channel_id):
+    for member in ctx.guild.members:
+        if member.voice != None:
+            await member.move_to(discord.utils.get(ctx.guild.channels, id = int(channel_id)))
+
+@bot.command()
+async def distribute(ctx, category_id):
+    to_move = [member for member in ctx.guild.members if member.voice != None]
+    available = [priv_vc for priv_vc in discord.utils.get(ctx.guild.categories, id = int(category_id)).channels if type(priv_vc) == discord.VoiceChannel]
+    if len(to_move) <= len(available):
+        for index, member in enumerate(to_move):
+            await member.move_to(available[index])
+    else:
+        await ctx.reply("Too many people too move")
+
 @bot.event
 async def on_voice_state_update(member, before, after):
-    TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
-    THREE_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "3 person create").id
-    FOUR_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "4 person create").id
+    if after.channel != None:
+        TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
+        THREE_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "3 person create").id
+        FOUR_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "4 person create").id
 
-    if after.channel.id == TWO_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"2 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 2)
+        if after.channel.id == TWO_PLAYER_CREATE:
+            await after.channel.guild.create_voice_channel(f"2 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 2)
 
-    if after.channel.id == THREE_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"3 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 3)
+        if after.channel.id == THREE_PLAYER_CREATE:
+            await after.channel.guild.create_voice_channel(f"3 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 3)
 
-    if after.channel.id == FOUR_PLAYER_CREATE:
-        await after.channel.guild.create_voice_channel(f"4 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 4)
+        if after.channel.id == FOUR_PLAYER_CREATE:
+            await after.channel.guild.create_voice_channel(f"4 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 4)
 
-
-    if before.channel.category.id == discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS").id:
-        if len(before.channel.members) == 0 and "create" not in before.channel.name: # Checks if there are 0 players in that vc
-            await before.channel.delete()
+    if before.channel != None:
+        if before.channel.category.id == discord.utils.get(before.channel.guild.categories, name = "PRIVATEVCS").id:
+            if len(before.channel.members) == 0 and "create" not in before.channel.name: # Checks if there are 0 players in that vc
+                await before.channel.delete()
     
 
 token = open("token.txt", "r") # You aint getting my token you sneaky boi
-bot.run(token.readline())
+bot.run(token.readline(), log_handler=handler)
