@@ -181,9 +181,11 @@ async def purge_vcs(ctx):
 
 @bot.command()
 async def mute_all(ctx):
-    for player in ctx.guild.get_role(1168613786685550734).members:
-        if player.voice:
-            await player.edit(mute=True)
+    for role in ctx.author[1].roles:
+        if role.permissions.administrator:
+            for player in ctx.guild.get_role(1168613786685550734).members:
+                if player.voice:
+                    await player.edit(mute=True)
 
 @bot.command()
 async def unmute_all(ctx):
