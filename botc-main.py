@@ -224,6 +224,10 @@ async def distribute(ctx, category_id):
     else:
         await ctx.reply("Too many people too move")
 
+@bot.command()
+async def jansus(ctx):
+    await ctx.channel.send(file=discord.File('jansus.png'))
+
 @bot.event
 async def on_message(message):
 
