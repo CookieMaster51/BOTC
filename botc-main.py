@@ -224,12 +224,6 @@ async def distribute(ctx, category_id):
     else:
         await ctx.reply("Too many people too move")
 
-@bot.command()
-async def jansus(ctx):
-    with open('my_image.png', 'rb') as f:
-        picture = discord.File(f)
-        await ctx.channel.send(file=picture)
-
 @bot.event
 async def on_message(message):
     if not message.author.bot:
