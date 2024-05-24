@@ -178,6 +178,18 @@ async def purge_vcs(ctx):
             await channel.delete() # Gets rid of it
 
 @bot.command()
+async def mute_all(ctx):
+    for player in ctx.guild.get_role(1168613786685550734).members:
+        if player.voice:
+            await player.edit(mute=True)
+
+@bot.command()
+async def unmute_all(ctx):
+    for player in ctx.guild.get_role(1168613786685550734).members:
+        if player.voice:
+            await player.edit(mute=False)
+
+@bot.command()
 async def send_roles(ctx):
     bot.game.combine()
     for person in bot.game.full_game: # Loops through everyone
