@@ -225,6 +225,15 @@ async def distribute(ctx, category_id):
         await ctx.reply("Too many people too move")
 
 @bot.event
+async def on_message(message):
+    if not message.author.bot:
+        if not message.channel.guild:
+            if "help" in message.content:
+                bobby = bot.get_user(485511317164130304)
+                await bobby.send(f"{message.author.display_name} needs help")
+
+
+@bot.event
 async def on_voice_state_update(member, before, after):
     if after.channel != None:
         TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
