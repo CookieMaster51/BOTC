@@ -226,11 +226,14 @@ async def distribute(ctx, category_id):
 
 @bot.event
 async def on_message(message):
+
+    await bot.process_commands(message) # VERY VERY FUCKING IMPORTANT
+
     if not message.author.bot:
-        if not message.channel.guild:
-            if "help" in message.content:
-                bobby = bot.get_user(485511317164130304)
-                await bobby.send(f"{message.author.display_name} needs help")
+        #if not message.channel.guild:
+        if "help" in message.content:
+            bobby = bot.get_user(485511317164130304)
+            await bobby.send(f"{message.author.display_name} needs help")
 
 
 @bot.event
@@ -256,4 +259,4 @@ async def on_voice_state_update(member, before, after):
     
 
 token = open("token.txt", "r") # You aint getting my token you sneaky boi
-bot.run(token.readline(), log_handler=handler)
+bot.run(token.readline())
