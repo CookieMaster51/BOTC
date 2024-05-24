@@ -175,7 +175,7 @@ async def new_game(ctx, number, player_role_id):
 
 @bot.command()
 async def purge_vcs(ctx):
-    for channel in discord.utils.get(ctx.guild.categories, name = "PRIVATEVCS").channels: # Goes through every channel in the privatevcs category
+    for channel in discord.utils.get(ctx.guild.categories, id = 1187372621029986325).channels: # Goes through every channel in the privatevcs category
         if "create" not in channel.name:
             await channel.delete() # Gets rid of it
 
