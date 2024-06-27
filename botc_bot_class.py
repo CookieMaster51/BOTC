@@ -14,6 +14,14 @@ class botc_bot:
         token = open(self.token_file_name, "r") # You aint getting my token you sneaky boi
         self.bot.run(token.readline(), log_handler=self.handler)
 
+    def normal_message(self, alert_id):
+        @self.bot.event
+        async def on_message(message):
+
+            await self.bot.process_commands(message) # VERY VERY FUCKING IMPORTANT
+
+            self.check_help(message, alert_id)
+
     def ready(self):
         @self.bot.event
         async def on_ready():
@@ -63,17 +71,12 @@ class botc_bot:
         async def jansus(ctx):
             await ctx.channel.send(file=discord.File('jansus.png'))
 
-    def normal_message(self, alert_id):
-        @self.bot.event
-        async def on_message(message):
-
-            await self.bot.process_commands(message) # VERY VERY FUCKING IMPORTANT
-
-            if not message.author.bot:
-                if type(message.channel) == discord.channel.DMChannel:
-                    if "help" in message.content:
-                        alert_usr = self.bot.get_user(alert_id)
-                        await alert_usr.send(f"{message.author.mutual_guilds[0].get_member(message.author.id).display_name} needs help")
+    async def check_help(self, message, alert_id):
+        if not message.author.bot:
+            if type(message.channel) == discord.channel.DMChannel:
+                if "help" in message.content:
+                    alert_usr = self.bot.get_user(alert_id)
+                    await alert_usr.send(f"{message.author.mutual_guilds[0].get_member(message.author.id).display_name} needs help")
 
     def voice_stated(self):
         @self.bot.event
