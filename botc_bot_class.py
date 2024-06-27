@@ -16,7 +16,7 @@ class botc_bot:
 
     def ready(self):
         @self.bot.event
-        async def on_ready(): # Mostly constants
+        async def on_ready():
             print("ready")
     
     def purge(self):

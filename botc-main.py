@@ -1,4 +1,4 @@
-from botc_helper import botc_bot
+from botc_bot_class import botc_bot
 
 bot = botc_bot("!", "token.txt", "discord.log")
 
