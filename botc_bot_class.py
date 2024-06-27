@@ -20,7 +20,7 @@ class botc_bot:
 
             await self.bot.process_commands(message) # VERY VERY FUCKING IMPORTANT
 
-            self.check_help(message, alert_id)
+            await self.check_help(message, alert_id)
 
     def ready(self):
         @self.bot.event
