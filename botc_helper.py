@@ -1,28 +1,101 @@
 import discord
-class Player:
-    def __init__(self, role:str, alignment_good:bool, discord_id:int, discord_nick:str, has_ghost_voted:bool = False, is_dead:bool = False, reminders:list = [], bluffs:list = []):
-        self.role = role
-        self.discord_id = discord_id
-        self.has_ghost_voted = has_ghost_voted
-        self.is_dead = is_dead
-        self.reminders = reminders
-        self.alignment_good = alignment_good
-        self.discord_nick = discord_nick
-        self.bluffs = bluffs
+from discord.ext import commands
+import discord.utils
+import logging
 
-    def __repr__(self) -> str:
-        return f"name: {self.discord_nick}; role : {self.role}" if self.bluffs == [] else f"name: {self.discord_nick}; role : {self.role}; bluffs : {self.bluffs}"
+class botc_bot:
+    def __init__(self, prefix, token_file_name, log_file) -> None:    
+        intents = discord.Intents().all() # Might make this better than all of the intents
+        self.bot = commands.Bot(command_prefix=prefix, intents = intents) 
+        self.handler = logging.FileHandler(filename=log_file, encoding='utf-8', mode='w')
+        self.token_file_name = token_file_name
+        
+    def run(self):
+        token = open(self.token_file_name, "r") # You aint getting my token you sneaky boi
+        self.bot.run(token.readline(), log_handler=self.handler)
 
-class Game:
-    def __init__(self) -> None:
-        self.demon = []
-        self.minions = []
-        self.outsiders = []
-        self.townsfolk = []
-        self.full_game = []
-
-    def combine(self):
-        self.full_game = self.demon + self.minions + self.outsiders + self.townsfolk
+    def ready(self):
+        @self.bot.event
+        async def on_ready(): # Mostly constants
+            print("ready")
     
-    def __repr__(self) -> str:
-        return str(list(map(str, self.demon)) + list(map(str, self.minions)) + list(map(str, self.outsiders)) + list(map(str, self.townsfolk))) + "\n"
+    def purge(self):
+        @self.bot.command()
+        async def purge_vcs(ctx):
+            for channel in discord.utils.get(ctx.guild.categories, name="PRIVATEVCS").channels: # Goes through every channel in the privatevcs category
+                if "create" not in channel.name:
+                    await channel.delete() # Gets rid of it
+
+    def mute(self, role_id):
+        @self.bot.command()
+        async def mute_all(ctx):
+            for player in ctx.guild.get_role(role_id).members:
+                if player.voice:
+                    await player.edit(mute=True)
+
+    def unmute(self, role_id):
+        @self.bot.command()
+        async def unmute_all(ctx):
+            for player in ctx.guild.get_role(role_id).members:
+                if player.voice:
+                    await player.edit(mute=False)
+
+    def collect_people(self):
+        @self.bot.command()
+        async def collect(ctx, channel_id):
+            for member in ctx.guild.members:
+                if member.voice != None:
+                    await member.move_to(discord.utils.get(ctx.guild.channels, id = int(channel_id)))
+
+    def distribute_to(self):
+        @self.bot.command()
+        async def distribute(ctx, category_id):
+            to_move = [member for member in ctx.guild.members if member.voice != None]
+            available = [priv_vc for priv_vc in discord.utils.get(ctx.guild.categories, id = int(category_id)).channels if type(priv_vc) == discord.VoiceChannel]
+            if len(to_move) <= len(available):
+                for index, member in enumerate(to_move):
+                    await member.move_to(available[index])
+            else:
+                await ctx.reply("Too many people too move")
+
+    def sus(self):
+        @self.bot.command()
+        async def jansus(ctx):
+            await ctx.channel.send(file=discord.File('jansus.png'))
+
+    def normal_message(self, alert_id):
+        @self.bot.event
+        async def on_message(message):
+
+            await self.bot.process_commands(message) # VERY VERY FUCKING IMPORTANT
+
+            if not message.author.bot:
+                if type(message.channel) == discord.channel.DMChannel:
+                    if "help" in message.content:
+                        bobby = self.bot.get_user(alert_id)
+                        await bobby.send(f"{message.author.mutual_guilds[0].get_member(message.author.id).display_name} needs help")
+
+    def voice_stated(self):
+        @self.bot.event
+        async def on_voice_state_update(member, before, after):
+            if after.channel != None:
+                TWO_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "2 person create").id
+                THREE_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "3 person create").id
+                FOUR_PLAYER_CREATE = discord.utils.get(after.channel.guild.channels, name = "4 person create").id
+
+                if after.channel.id == TWO_PLAYER_CREATE:
+                    await after.channel.guild.create_voice_channel(f"2 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 2)
+
+                if after.channel.id == THREE_PLAYER_CREATE:
+                    await after.channel.guild.create_voice_channel(f"3 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 3)
+
+                if after.channel.id == FOUR_PLAYER_CREATE:
+                    await after.channel.guild.create_voice_channel(f"4 player {member.display_name}", category = discord.utils.get(after.channel.guild.categories, name = "PRIVATEVCS"), user_limit = 4)
+
+            if before.channel != None:
+                if before.channel.category.id == discord.utils.get(before.channel.guild.categories, name = "PRIVATEVCS").id:
+                    if len(before.channel.members) == 0 and "create" not in before.channel.name: # Checks if there are 0 players in that vc
+                        await before.channel.delete()
+        
+
+
