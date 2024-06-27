@@ -1,13 +1,14 @@
-from botc_bot_class import botc_bot
+"""Runs an instance of the bot"""
+from botc_bot_class import BotcBot
 
-bot = botc_bot("!", "token.txt", "discord.log")
+bot = BotcBot("!", "token.txt", "discord.log")
 
-mute_role_id = 1168613786685550734
+MUTE_ROLE_ID = 1168613786685550734
 
 bot.ready()
 
-bot.unmute(mute_role_id)
-bot.mute(mute_role_id)
+bot.unmute(MUTE_ROLE_ID)
+bot.mute(MUTE_ROLE_ID)
 
 bot.sus()
 
