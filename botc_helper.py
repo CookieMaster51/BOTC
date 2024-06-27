@@ -72,8 +72,8 @@ class botc_bot:
             if not message.author.bot:
                 if type(message.channel) == discord.channel.DMChannel:
                     if "help" in message.content:
-                        bobby = self.bot.get_user(alert_id)
-                        await bobby.send(f"{message.author.mutual_guilds[0].get_member(message.author.id).display_name} needs help")
+                        alert_usr = self.bot.get_user(alert_id)
+                        await alert_usr.send(f"{message.author.mutual_guilds[0].get_member(message.author.id).display_name} needs help")
 
     def voice_stated(self):
         @self.bot.event
