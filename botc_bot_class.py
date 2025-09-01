@@ -106,13 +106,13 @@ class BotcBot:
         async def stme(ctx):
             for role in ctx.author.roles:
                 if role.id == 1412133658986283038:
-                    ctx.author.add_roles(discord.utils.get(ctx.guild.roles(), role_id=1168613830935457802))
+                    ctx.author.add_roles(discord.utils.get(ctx.guild.roles(), id=1168613830935457802))
         
         @self.bot.command()
         async def unstme(ctx):
             for role in ctx.author.roles:
                 if role.id == 1168613830935457802:
-                    ctx.author.remove_roles(discord.utils.get(ctx.guild.roles(), role_id=1168613830935457802))
+                    ctx.author.remove_roles(discord.utils.get(ctx.guild.roles(), id=1168613830935457802))
 
 
     async def check_help(self, message, alert_id):
