@@ -94,7 +94,7 @@ class BotcBot:
         async def jansus(ctx):
             await ctx.channel.send(file=discord.File('jansus.png'))
     
-    def ballsquote(self)
+    def ballsquote(self):
         """balls quote is posted"""
         @self.bot.command()
         async def balls(ctx):
