@@ -101,13 +101,7 @@ class BotcBot:
             await ctx.channel.send(file=discord.File('balls.png'))
 
     def self_st(self):
-        """Allows people to make themselves an ST"""
-        @self.bot.command()
-        async def stme(ctx):
-            for role in ctx.author.roles:
-                if role.id == 1412133658986283038:
-                    await ctx.author.add_roles(discord.utils.get(ctx.guild.roles(), id=1168613830935457802))
-        
+        """Allows people to make themselves an ST"""        
         @self.bot.command()
         async def unstme(ctx):
             for role in ctx.author.roles:
