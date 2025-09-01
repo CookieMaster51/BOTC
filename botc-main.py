@@ -11,6 +11,7 @@ bot.unmute(MUTE_ROLE_ID)
 bot.mute(MUTE_ROLE_ID)
 
 bot.sus()
+bot.ballsquote()
 
 bot.normal_message(690615895663575182)
 

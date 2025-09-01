@@ -93,6 +93,13 @@ class BotcBot:
         @self.bot.command()
         async def jansus(ctx):
             await ctx.channel.send(file=discord.File('jansus.png'))
+                def sus(self):
+    
+    def ballsquote(self)
+        """balls quote is posted"""
+        @self.bot.command()
+        async def balls(ctx):
+            await ctx.channel.send(file=discord.File('balls.png'))
 
     async def check_help(self, message, alert_id):
         """Checks if any DMs have the word help"""
