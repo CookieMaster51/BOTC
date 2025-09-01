@@ -97,7 +97,7 @@ class BotcBot:
     def ballsquote(self):
         """balls quote is posted"""
         @self.bot.command()
-        async def balls(ctx):
+        async def bobaballs(ctx):
             await ctx.channel.send(file=discord.File('balls.png'))
 
     async def check_help(self, message, alert_id):
