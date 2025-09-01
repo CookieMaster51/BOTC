@@ -21,4 +21,6 @@ bot.voice_stated()
 bot.collect_people()
 bot.distribute_to()
 
+bot.self_st()
+
 bot.run()
